@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BoardStatus } from './board.model';
-import { CreateBoardDto } from './dto/create.board.dto';
-import { BoardEntity } from './board.entity';
+import { CreateBoardDto, ReportCount } from './dto/create.board.dto';
+import { BoardEntity } from './entity/board.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -56,6 +56,20 @@ export class BoardsService {
 
     if (result.affected === 0) {
       throw new NotFoundException(`can't find Board with id ${id}`);
+    }
+  }
+  async reportBoard(id: number, reportCount: ReportCount) {
+    const board = await this.boardDB.findOneBy({ id });
+
+    if (!board) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
+
+    board.reportCount += 1;
+    await this.boardDB.save(board);
+
+    if (board.reportCount >= 5) {
+      await this.deleteBoard(id);
     }
   }
 }

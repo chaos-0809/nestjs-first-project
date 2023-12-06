@@ -16,3 +16,7 @@ export class CreateBoardDto {
   @IsNotEmpty()
   description: string;
 }
+
+export class ReportCount {
+  reportCount: ReportCount;
+}

@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { CreateBoardDto } from './dto/create.board.dto';
+import { CreateBoardDto, ReportCount } from './dto/create.board.dto';
 import { Param } from '@nestjs/common';
 
 @Controller('boards')
@@ -39,5 +39,10 @@ export class BoardsController {
   @Delete('/:id')
   deleteBoard(@Param('id') id: number) {
     this.boardService.deleteBoard(id);
+  }
+
+  @Post(':id/report')
+  async reportBoard(@Param('id') id: number, @Body() ReportCount: ReportCount) {
+    await this.boardService.reportBoard(id, ReportCount);
   }
 }
