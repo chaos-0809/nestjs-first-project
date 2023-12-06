@@ -1,45 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Board, BoardStatus } from './board.model';
-import { v1 as uuid } from 'uuid';
+import { BoardStatus } from './board.model';
 import { CreateBoardDto } from './dto/create.board.dto';
+import { BoardEntity } from './board.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BoardsService {
-  private boards: Board[] = [];
+  constructor(
+    @InjectRepository(BoardEntity)
+    private boardDB: Repository<BoardEntity>,
+  ) {}
 
-  getAllBoards(): Board[] {
-    return this.boards;
+  getAllBoards() {
+    return this.boardDB.find();
   }
 
-  createBoard(createBoardDto: CreateBoardDto) {
-    const { title, description } = createBoardDto;
-    const board: Board = {
-      id: uuid(),
-      title: title,
+  async getBoardByPage(page: number) {
+    const boards = await this.boardDB.find({
+      take: 10,
+      skip: (page - 1) * 10,
+    });
+
+    return {
+      success: true,
+      body: boards,
+      next: page + 1,
+    };
+  }
+
+  async createBoard(createBoardDto: CreateBoardDto) {
+    const { title, description, name, password, categories } = createBoardDto;
+    const board = this.boardDB.create({
+      title,
       description, // 이름이 똑같을 경우 (콜론 + 이름)을 생략할수있다.
       status: BoardStatus.PUBLIC,
-    };
-
-    this.boards.push(board);
+      name,
+      password,
+      categories,
+    });
+    await this.boardDB.save(board);
     return board;
   }
 
-  getBoardById(id: string): Board {
-    const found = this.boards.find((board) => board.id === id);
+  async getBoardById(id: number) {
+    const found = await this.boardDB.findOneBy({ id });
     if (!found) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
     return found;
   }
 
-  deleteBoard(id: string): void {
-    const found = this.getBoardById(id);
-    this.boards = this.boards.filter((board) => board.id !== found.id);
-  }
+  async deleteBoard(id: number) {
+    const result = await this.boardDB.delete({ id });
 
-  updateBoardStatus(id: string, status: BoardStatus): Board {
-    const board = this.getBoardById(id);
-    board.status = status;
-    return board;
+    if (result.affected === 0) {
+      throw new NotFoundException(`can't find Board with id ${id}`);
+    }
   }
 }

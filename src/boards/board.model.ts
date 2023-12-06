@@ -3,6 +3,9 @@ export interface Board {
   title: string;
   description: string;
   status: BoardStatus;
+  name: string;
+  password: string;
+  categories: string;
 }
 
 export enum BoardStatus {

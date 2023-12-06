@@ -5,5 +5,14 @@ export class CreateBoardDto {
   title: string;
 
   @IsNotEmpty()
+  name: string;
+
+  @IsNotEmpty()
+  password: string;
+
+  @IsNotEmpty()
+  categories: string;
+
+  @IsNotEmpty()
   description: string;
 }
