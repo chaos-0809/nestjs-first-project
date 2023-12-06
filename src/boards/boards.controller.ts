@@ -8,15 +8,15 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { BoardsService } from './boards.service';
-import { Board, BoardStatus } from './board.model';
-import { CreateBoardDto } from './dto/create.board.dto';
-import { Param } from '@nestjs/common';
-import { BoardStatusValidationPipe } from './pipes/board.status.validation.pipe';
+import { BoardsService } from './boards.service'
+import { Board, BoardStatus } from './board.model'
+import { CreateBoardDto } from './dto/create.board.dto'
+import { Param } from '@nestjs/common'
+import { BoardStatusValidationPipe } from './pipes/board.status.validation.pipe'
 
 @Controller('boards')
 export class BoardsController {
-  constructor(private boardService: BoardsService) {}
+  constructor(private boardService: BoardsService) { }
 
   @Get('/')
   getAllBoard(): Board[] {
