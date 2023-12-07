@@ -18,5 +18,5 @@ export class CreateBoardDto {
 }
 
 export class ReportCount {
-  reportCount: ReportCount;
+  reportCount: number;
 }

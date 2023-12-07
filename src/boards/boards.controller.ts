@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { CreateBoardDto, ReportCount } from './dto/create.board.dto';
+import { CreateBoardDto } from './dto/create.board.dto';
 import { Param } from '@nestjs/common';
 
 @Controller('boards')
@@ -42,7 +42,7 @@ export class BoardsController {
   }
 
   @Post(':id/report')
-  async reportBoard(@Param('id') id: number, @Body() ReportCount: ReportCount) {
-    await this.boardService.reportBoard(id, ReportCount);
+  async reportBoard(@Param('id') id: number) {
+    await this.boardService.reportBoard(id);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BoardStatus } from './board.model';
-import { CreateBoardDto, ReportCount } from './dto/create.board.dto';
+import { CreateBoardDto } from './dto/create.board.dto';
 import { BoardEntity } from './entity/board.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,8 +12,8 @@ export class BoardsService {
     private boardDB: Repository<BoardEntity>,
   ) {}
 
-  getAllBoards() {
-    return this.boardDB.find();
+  async getAllBoards() {
+    return await this.boardDB.find();
   }
 
   async getBoardByPage(page: number) {
@@ -33,7 +33,7 @@ export class BoardsService {
     const { title, description, name, password, categories } = createBoardDto;
     const board = this.boardDB.create({
       title,
-      description, // 이름이 똑같을 경우 (콜론 + 이름)을 생략할수있다.
+      description,
       status: BoardStatus.PUBLIC,
       name,
       password,
@@ -58,9 +58,8 @@ export class BoardsService {
       throw new NotFoundException(`can't find Board with id ${id}`);
     }
   }
-  async reportBoard(id: number, reportCount: ReportCount) {
+  async reportBoard(id: number) {
     const board = await this.boardDB.findOneBy({ id });
-
     if (!board) {
       throw new NotFoundException(`Can't find Board with id ${id}`);
     }
